@@ -7,4 +7,8 @@ import com.jsp.sagar_shopee.model.Category;
 public interface CategoryRepo extends JpaRepository<Category, Long>{
 
 	Category findByName(String name);
+
+	Category findCategoryByName(String name);
+
+	boolean existByName(String name);
 }
