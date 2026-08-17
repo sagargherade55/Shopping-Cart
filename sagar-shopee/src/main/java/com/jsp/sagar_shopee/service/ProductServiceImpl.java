@@ -1,6 +1,5 @@
 package com.jsp.sagar_shopee.service;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -19,65 +18,59 @@ import com.jsp.sagar_shopee.request.ProductUpdateRequest;
 import lombok.NoArgsConstructor;
 
 @Service
-@NoArgsConstructor
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
-	@Autowired
 	private ProductRepo productRepo;
 	private CategoryRepo categoryRepo;
-	
-	
+
+	@Autowired
+	public ProductServiceImpl(ProductRepo productRepo, CategoryRepo categoryRepo) {
+		this.productRepo = productRepo;
+		this.categoryRepo = categoryRepo;
+	}
+
 	@Override
-	public Product addProduct(AddProductRequest request) {		
-		Category category= Optional.ofNullable(categoryRepo.findByName(request.getCategory().getName()))
-				.orElseGet(() ->{
-					Category newCategory= new Category(request.getCategory().getName());
+	public Product addProduct(AddProductRequest request) {
+		Category category = Optional.ofNullable(categoryRepo.findByName(request.getCategory().getName()))
+				.orElseGet(() -> {
+					Category newCategory = new Category(request.getCategory().getName());
 					return categoryRepo.save(newCategory);
 				});
-		 request.setCategory(category);
-		 return productRepo.save(createNewProduct(request, category));
+		request.setCategory(category);
+		return productRepo.save(createNewProduct(request, category));
 	}
-	
+
 	private Product createNewProduct(AddProductRequest request, Category category) {
-		return new Product(
-				request.getName(),
-				request.getBrand(),
-				request.getPrice(),
-				request.getInventory(),
-				request.getDescription(),
-				category
-				);
+		return new Product(request.getName(), request.getBrand(), request.getPrice(), request.getInventory(),
+				request.getDescription(), category);
 	}
 
 	@Override
 	public Product getProductById(long id) {
-		return productRepo.findById(id)
-				.orElseThrow(()->new ProductNotFoundException("Product Not Found!"));
+		return productRepo.findById(id).orElseThrow(() -> new ProductNotFoundException("Product Not Found!"));
 	}
 
 	@Override
 	public void deleteProductById(long id) {
-		productRepo.findById(id).ifPresentOrElse(productRepo::delete, ()->{
+		productRepo.findById(id).ifPresentOrElse(productRepo::delete, () -> {
 			throw new ProductNotFoundException("Product Not Found!");
 		});
 	}
 
 	@Override
 	public Product updateProduct(ProductUpdateRequest request, long productId) {
-		return productRepo.findById(productId)
-				.map(existingProduct -> updatExistingProduct(existingProduct, request))
-				.map(productRepo :: save)
-				.orElseThrow(() -> new ProductNotFoundException("Product not found"));
+		return productRepo.findById(productId).map(existingProduct -> updatExistingProduct(existingProduct, request))
+				.map(productRepo::save).orElseThrow(() -> new ProductNotFoundException("Product not found"));
 	}
-	
-	private Product updatExistingProduct(Product existingProduct, ProductUpdateRequest request){
+
+	private Product updatExistingProduct(Product existingProduct, ProductUpdateRequest request) {
 		existingProduct.setName(request.getName());
 		existingProduct.setBrand(request.getBrand());
 		existingProduct.setPrice(request.getPrice());
 		existingProduct.setInventory(request.getInventory());
 		existingProduct.setDescription(request.getDescription());
-		
-		Category category= categoryRepo.findByName(request.getCategory().getName());
+
+		Category category = categoryRepo.findByName(request.getCategory().getName());
 		existingProduct.setCategory(category);
 		return existingProduct;
 	}

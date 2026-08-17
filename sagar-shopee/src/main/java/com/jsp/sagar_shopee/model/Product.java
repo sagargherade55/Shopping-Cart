@@ -27,20 +27,18 @@ public class Product {
 	private String brand;
 	private long price;
 	private int inventory;
-	private String description; 
-	
+	private String description;
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "category_id")
 	private Category category;
-	
+
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Image> image;
-	
 
 	public Product() {
 	}
 
-	
 	public Product(String name, String brand, long price, int inventory, String description, Category category) {
 		this.name = name;
 		this.brand = brand;
@@ -49,7 +47,6 @@ public class Product {
 		this.description = description;
 		this.category = category;
 	}
-
 
 	public Product(long id, String name, String brand, long price, int inventory, String description, Category category,
 			List<Image> image) {
@@ -63,7 +60,6 @@ public class Product {
 		this.category = category;
 		this.image = image;
 	}
-
 
 	public long getId() {
 		return id;

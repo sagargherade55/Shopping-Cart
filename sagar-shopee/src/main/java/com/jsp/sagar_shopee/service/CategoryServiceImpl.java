@@ -14,37 +14,36 @@ import com.jsp.sagar_shopee.repo.CategoryRepo;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
+	private final CategoryRepo categoryRepo;
+
 	@Autowired
-	private CategoryRepo categoryRepo;
+	public CategoryServiceImpl(CategoryRepo categoryRepo) {
+		this.categoryRepo = categoryRepo;
+	}
 
 	@Override
 	public Category getCategoryById(long id) {
-		// TODO Auto-generated method stub
 		return categoryRepo.findById(id).orElseThrow(() -> new ResourseNotFoundException("Resourse Not Found !"));
 	}
 
 	@Override
 	public Category getCategoryByName(String name) {
-		// TODO Auto-generated method stub
 		return categoryRepo.findCategoryByName(name);
 	}
 
 	@Override
 	public List<Category> getAllCategories() {
-		// TODO Auto-generated method stub
 		return categoryRepo.findAll();
 	}
 
 	@Override
 	public Category addCategory(Category category) {
-		// TODO Auto-generated method stub
 		return Optional.of(category).filter(c -> !categoryRepo.existByName(c.getName())).map(categoryRepo::save)
 				.orElseThrow(() -> new CategoryAlreadyExist(category.getName() + " : already Exist"));
 	}
 
 	@Override
-	public Category updatCategory(Category category, long id) {
-		// TODO Auto-generated method stub
+	public Category updateCategory(Category category, long id) {
 		return Optional.ofNullable(getCategoryById(id)).map(oldCategory -> {
 			oldCategory.setName(category.getName());
 			return categoryRepo.save(oldCategory);
@@ -53,7 +52,6 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public void deleteCategoryById(long id) {
-		// TODO Auto-generated method stub
 		categoryRepo.findById(id).ifPresentOrElse(categoryRepo::delete, () -> {
 			throw new ResourseNotFoundException("Resourse Not Found !");
 		});

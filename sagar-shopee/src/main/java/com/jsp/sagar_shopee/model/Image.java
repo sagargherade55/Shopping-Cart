@@ -19,6 +19,20 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Image {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+	private String fileName;
+	private String fileType;
+
+	@Lob
+	private Blob image;
+	private String downloadUrl;
+
+	@ManyToOne
+	@JoinColumn(name = "product_id")
+	private Product product;
+
 	public long getId() {
 		return id;
 	}
@@ -66,18 +80,4 @@ public class Image {
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private String fileName;
-	private String fileType;
-	
-	@Lob
-	private Blob image;
-	private String downloadUrl;
-	
-	@ManyToOne
-	@JoinColumn(name = "product_id")
-	private Product product;
 }
